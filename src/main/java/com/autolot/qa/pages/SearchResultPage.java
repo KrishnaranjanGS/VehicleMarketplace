@@ -22,11 +22,11 @@ public class SearchResultPage {
 	}
 	
 	public String getSearchPageResultTitle() {
-		return driver.getTitle();
+		return eleUtil.getPageTitle();
 	}
 	
 	public  String getSearchPageResultUrl() {
-		return driver.getCurrentUrl();
+		return eleUtil.getPageUrl();
 	}
 	
 	public  List<WebElement> getSearchPageResultContainers() {

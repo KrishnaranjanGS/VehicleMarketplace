@@ -15,6 +15,16 @@ public class ElementUtils {
 		this.driver = driver;
 	}
 	
+	public String getPageTitle() {
+	String title = driver.getTitle();
+	return title;
+	}
+	
+	public String getPageUrl() {
+	String url = driver.getCurrentUrl();
+	return url;
+	}
+	
 	public List<WebElement> getElementsNames(By locator) {
 		List<WebElement> elements = driver.findElements(locator);
 		List<String> text= new ArrayList<>();
