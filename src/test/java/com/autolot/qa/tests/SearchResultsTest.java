@@ -31,4 +31,10 @@ public class SearchResultsTest extends BaseTest{
 		int filterSize = searchResults.getSearchResultFilters().size();
 		Assert.assertEquals(filterSize, 18);
 	}
+	
+	@Test(priority=5)
+	public void FilterByDistsanceTest() throws InterruptedException {
+		boolean flag = searchResults.doValidateSearchResultHeaders("10001", "25");
+		Assert.assertTrue(flag);
+	}
 }
