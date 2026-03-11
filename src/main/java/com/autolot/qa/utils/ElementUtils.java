@@ -12,6 +12,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.autolot.qa.constants.AutolotConstants;
+
 public class ElementUtils {
 
 	WebDriver driver;
@@ -21,9 +23,15 @@ public class ElementUtils {
 	
 	public ElementUtils(WebDriver driver) {
 		this.driver = driver;
-		act = new Actions(driver);
-		js = (JavascriptExecutor)driver;
+		this.wait = new WebDriverWait(driver, Duration.ofSeconds(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT));
+		this.act = new Actions(driver);
+		this.js = (JavascriptExecutor)driver;
 	}
+	
+	// A helper to get a wait object only when a custom timeout is needed
+	private WebDriverWait getWait(int timeout) {
+        return new WebDriverWait(driver, Duration.ofSeconds(timeout));
+    }
 	
 	public String getPageTitle() {
 	String title = driver.getTitle();
@@ -54,20 +62,17 @@ public class ElementUtils {
 	}
 	
 	public WebElement waitForElementVisible(By locator, int timeout) {
-		wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
-		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+		WebElement element = getWait(timeout).until(ExpectedConditions.visibilityOfElementLocated(locator));
 		return element;
 	}
 	
 	public List<WebElement> waitForElementsVisible(By locator, int timeout) {
-		wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
-		List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
+		List<WebElement> elements = getWait(timeout).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
 		return elements;
 	}
 	
 	public WebElement waitForElementClickable(By locator, int timeout) {
-		wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
-		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+		WebElement element = getWait(timeout).until(ExpectedConditions.elementToBeClickable(locator));
 		return element;
 	}
 	
@@ -76,8 +81,7 @@ public class ElementUtils {
 	}
 	
 	public void waitForPageLoad(int timeout) {
-		wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
-	    wait.until(d -> ((JavascriptExecutor) d).executeScript("return document.readyState").equals("complete"));
+		getWait(timeout).until(d -> ((JavascriptExecutor) d).executeScript("return document.readyState").equals("complete"));
 	}	
 	
 	public void clickAndRetry(By parentLocator, By childLocator, int timeout) {
@@ -100,6 +104,10 @@ public class ElementUtils {
 	
 	 public void clickUsingJS(WebElement element) { 
 	 js.executeScript("arguments[0].click();", element); 
+	 }
+	 
+	 public void clickUsingJS(By locator) { 
+	 js.executeScript("arguments[0].click();", getWebElement(locator)); 
 	 }
 	
 }
