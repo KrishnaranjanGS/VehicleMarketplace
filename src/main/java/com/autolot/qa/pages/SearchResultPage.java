@@ -7,6 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import com.autolot.qa.constants.AutolotConstants;
 import com.autolot.qa.utils.ElementUtils;
 
 public class SearchResultPage {
@@ -60,53 +61,34 @@ public class SearchResultPage {
 	}
 	
 	public  List<WebElement> getSearchPageResultContainers() {
-		return eleUtil.getElementsNames(searchResultsContainer);
+		return eleUtil.getElementsNamesUsingWait(searchResultsContainer, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 	}
 	
 	public List<WebElement> getSearchResultFilters(){
-		return eleUtil.getElementsNames(searchResultFilters);
+		return eleUtil.getElementsNamesUsingWait(searchResultFilters, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 	}
 	
 	public void doFilterByDistance(String zipCode, String proximityValue) {
-		eleUtil.waitForPageLoad();
-		eleUtil.waitForElementVisible(filtersPanel);
-		
-//		boolean isOpen = false;
-//	    int counter = 0;
-//	    while (!isOpen && counter < 5) {
-//	        try {
-//	            // Wait for element and click 
-//	        	WebElement ele = eleUtil.waitForElementClickable(filterByDistance);
-//	            ele.click(); 
-//	            // Check if the zipcode input is now visible (Timeout of 2 seconds here)
-//	            eleUtil.waitForElementsVisible(cityOrZipcode);
-////	            new WebDriverWait(driver, Duration.ofSeconds(2)).until(ExpectedConditions.visibilityOfElementLocated(cityOrZipcode));
-//	            isOpen = true;
-//	        } catch (Exception e) {
-//	            counter++;
-//	            System.out.println("Accordion didn't open, retrying click... attempt " + counter);
-//	        }
-//	    }
-		eleUtil.clickAndRetry(filterByDistance, cityOrZipcode);
-		eleUtil.waitForElementClickable(filterByDistance).click();
-		WebElement cityZipcode =eleUtil.waitForElementVisible(cityOrZipcode);
+		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		eleUtil.waitForElementVisible(filtersPanel, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		eleUtil.clickAndRetry(filterByDistance, cityOrZipcode, AutolotConstants.DEFAULT_RETRY_TIME_OUT);
+		eleUtil.waitForElementClickable(filterByDistance, AutolotConstants.DEFAULT_SHORT_TIME_OUT).click();
+		WebElement cityZipcode =eleUtil.waitForElementVisible(cityOrZipcode, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		cityZipcode.sendKeys(zipCode);
-		WebElement citySuggest = eleUtil.waitForElementVisible(citySuggestion);
+		WebElement citySuggest = eleUtil.waitForElementVisible(citySuggestion, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		citySuggest.click();
-		eleUtil.waitForElementClickable(proximityFilter);
+		eleUtil.waitForElementClickable(proximityFilter, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		Select select = new Select(eleUtil.getWebElement(proximityFilter));
 		select.selectByValue(proximityValue);
 	}
 	
-	
-	
 	public boolean doValidateSearchResultHeaders(String zipCode, String proximityValue) throws InterruptedException {
 		doFilterByDistance(zipCode, proximityValue);
-		eleUtil.waitForElementsVisible(searchResultZipCode);
-		String srpZipCode = eleUtil.getElementText(searchResultZipCode);
-		eleUtil.waitForElementsVisible(searchResultProximity);
+		eleUtil.waitForElementsVisible(searchResultZipCode, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		String srpZipCode = eleUtil.getElementTextUsingWait(searchResultZipCode, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		eleUtil.waitForElementsVisible(searchResultProximity, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		Thread.sleep(2000);
-		String srpProximity = eleUtil.getElementText(searchResultProximity);
+		String srpProximity = eleUtil.getElementTextUsingWait(searchResultProximity, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		System.out.println("Input zipcode: " + zipCode + "; Filtered zipcode: " + srpZipCode + 
 				"\nInput proximity: " + proximityValue + "; Filtered proximity: " + srpProximity );
 			if(srpZipCode.equals(zipCode) && srpProximity.contains(proximityValue)) {

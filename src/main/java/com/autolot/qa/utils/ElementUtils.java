@@ -21,7 +21,6 @@ public class ElementUtils {
 	
 	public ElementUtils(WebDriver driver) {
 		this.driver = driver;
-		wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		act = new Actions(driver);
 		js = (JavascriptExecutor)driver;
 	}
@@ -40,12 +39,12 @@ public class ElementUtils {
 		return driver.findElement(locator);
 	}
 	
-	public String getElementText(By locator) {
-		return waitForElementVisible(locator).getText();
+	public String getElementTextUsingWait(By locator, int timeout) {
+		return waitForElementVisible(locator, timeout).getText();
 	}
 	
-	public List<WebElement> getElementsNames(By locator) {
-		List<WebElement> elements = waitForElementsVisible(locator);
+	public List<WebElement> getElementsNamesUsingWait(By locator, int timeout) {
+		List<WebElement> elements = waitForElementsVisible(locator, timeout);
 		List<String> text = new ArrayList<>();
 			for(WebElement e: elements) {
 				text.add(e.getText());
@@ -54,17 +53,20 @@ public class ElementUtils {
 		return elements;
 	}
 	
-	public WebElement waitForElementVisible(By locator) {
+	public WebElement waitForElementVisible(By locator, int timeout) {
+		wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
 		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		return element;
 	}
 	
-	public List<WebElement> waitForElementsVisible(By locator) {
+	public List<WebElement> waitForElementsVisible(By locator, int timeout) {
+		wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
 		List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
 		return elements;
 	}
 	
-	public WebElement waitForElementClickable(By locator) {
+	public WebElement waitForElementClickable(By locator, int timeout) {
+		wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
 		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 		return element;
 	}
@@ -73,20 +75,21 @@ public class ElementUtils {
 		act.moveToElement(getWebElement(locator)).click().build().perform();
 	}
 	
-	public void waitForPageLoad() {
+	public void waitForPageLoad(int timeout) {
+		wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
 	    wait.until(d -> ((JavascriptExecutor) d).executeScript("return document.readyState").equals("complete"));
 	}	
 	
-	public void clickAndRetry(By parentLocator, By childLocator) {
+	public void clickAndRetry(By parentLocator, By childLocator, int timeout) {
 		boolean isOpen = false;
 	    int counter = 0;
 	    while (!isOpen && counter < 5) {
 	        try {
 	            // Wait for element and click 
-	        	WebElement ele = waitForElementClickable(parentLocator);
+	        	WebElement ele = waitForElementClickable(parentLocator, timeout);
 	            ele.click(); 
 	            // Check if the child element is now visible
-	            waitForElementsVisible(childLocator);
+	            waitForElementsVisible(childLocator, timeout);
 	            isOpen = true;
 	        } catch (Exception e) {
 	            counter++;
