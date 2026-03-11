@@ -71,23 +71,23 @@ public class SearchResultPage {
 		eleUtil.waitForPageLoad();
 		eleUtil.waitForElementVisible(filtersPanel);
 		
-		boolean isOpen = false;
-	    int counter = 0;
-	    while (!isOpen && counter < 5) {
-	        try {
-	            // Wait for element and click
-	        	WebElement ele = eleUtil.waitForElementClickable(filterByDistance);
-	            ele.click(); 
-	            // Check if the zipcode input is now visible (Timeout of 2 seconds here)
-	            eleUtil.waitForElementsVisible(cityOrZipcode);
-//	            new WebDriverWait(driver, Duration.ofSeconds(2)).until(ExpectedConditions.visibilityOfElementLocated(cityOrZipcode));
-	            isOpen = true;
-	        } catch (Exception e) {
-	            counter++;
-	            System.out.println("Accordion didn't open, retrying click... attempt " + counter);
-	        }
-	    }
-		
+//		boolean isOpen = false;
+//	    int counter = 0;
+//	    while (!isOpen && counter < 5) {
+//	        try {
+//	            // Wait for element and click 
+//	        	WebElement ele = eleUtil.waitForElementClickable(filterByDistance);
+//	            ele.click(); 
+//	            // Check if the zipcode input is now visible (Timeout of 2 seconds here)
+//	            eleUtil.waitForElementsVisible(cityOrZipcode);
+////	            new WebDriverWait(driver, Duration.ofSeconds(2)).until(ExpectedConditions.visibilityOfElementLocated(cityOrZipcode));
+//	            isOpen = true;
+//	        } catch (Exception e) {
+//	            counter++;
+//	            System.out.println("Accordion didn't open, retrying click... attempt " + counter);
+//	        }
+//	    }
+		eleUtil.clickAndRetry(filterByDistance, cityOrZipcode);
 		eleUtil.waitForElementClickable(filterByDistance).click();
 		WebElement cityZipcode =eleUtil.waitForElementVisible(cityOrZipcode);
 		cityZipcode.sendKeys(zipCode);

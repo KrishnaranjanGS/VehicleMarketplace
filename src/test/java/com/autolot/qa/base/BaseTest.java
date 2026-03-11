@@ -1,8 +1,8 @@
 package com.autolot.qa.base;
 
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import com.autolot.qa.factory.DriverFactory;
 import com.autolot.qa.pages.SearchResultPage;
@@ -14,7 +14,7 @@ public class BaseTest {
 	protected String browserName;
 	protected SearchResultPage searchResults;
 	
-	@BeforeTest
+	@BeforeMethod
 	public void setUp() {
 		df = new DriverFactory();
 		browserName = "chrome";
@@ -25,7 +25,7 @@ public class BaseTest {
 		searchResults = new SearchResultPage(driver);
 	}
 	
-	@AfterTest
+	@AfterMethod
 	public void tearDown() {
 		driver.quit();
 	}
