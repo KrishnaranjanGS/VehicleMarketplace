@@ -77,6 +77,24 @@ public class ElementUtils {
 	    wait.until(d -> ((JavascriptExecutor) d).executeScript("return document.readyState").equals("complete"));
 	}	
 	
+	public void clickAndRetry(By parentLocator, By childLocator) {
+		boolean isOpen = false;
+	    int counter = 0;
+	    while (!isOpen && counter < 5) {
+	        try {
+	            // Wait for element and click 
+	        	WebElement ele = waitForElementClickable(parentLocator);
+	            ele.click(); 
+	            // Check if the child element is now visible
+	            waitForElementsVisible(childLocator);
+	            isOpen = true;
+	        } catch (Exception e) {
+	            counter++;
+	            System.out.println("Element click didn't work, retrying... attempt " + counter);
+	        }
+	    }
+	}
+	
 	 public void clickUsingJS(WebElement element) { 
 	 js.executeScript("arguments[0].click();", element); 
 	 }
