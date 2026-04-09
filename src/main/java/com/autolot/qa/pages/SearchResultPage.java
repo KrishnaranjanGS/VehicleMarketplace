@@ -86,8 +86,9 @@ public class SearchResultPage {
 		doFilterByDistance(zipCode, proximityValue);
 		eleUtil.waitForElementsVisible(searchResultZipCode, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		String srpZipCode = eleUtil.getElementTextUsingWait(searchResultZipCode, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
-		eleUtil.waitForElementsVisible(searchResultProximity, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
-		Thread.sleep(2000);
+//		eleUtil.waitForElementsVisible(searchResultProximity, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+//		Thread.sleep(2000);
+		eleUtil.waitForElementRefresh(searchResultProximity, proximityValue, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		String srpProximity = eleUtil.getElementTextUsingWait(searchResultProximity, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		System.out.println("Input zipcode: " + zipCode + "; Filtered zipcode: " + srpZipCode + 
 				"\nInput proximity: " + proximityValue + "; Filtered proximity: " + srpProximity );

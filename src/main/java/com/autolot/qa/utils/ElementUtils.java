@@ -102,6 +102,20 @@ public class ElementUtils {
 	    }
 	}
 	
+	public void waitForElementRefresh(By locator, String value, int timeout) {
+		int counter = 5;
+		do {
+			waitForElementVisible(locator, timeout);
+			String eleValue = driver.findElement(locator).getText().trim().split(" ")[1];
+			System.out.println("proximity value in SRP is: " + eleValue);
+			if (eleValue.equals(value)){
+				counter=0;
+			}
+			counter--;
+		} while (counter>0);
+
+	}
+	
 	 public void clickUsingJS(WebElement element) { 
 	 js.executeScript("arguments[0].click();", element); 
 	 }
