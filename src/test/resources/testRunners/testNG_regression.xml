@@ -6,7 +6,7 @@
 
 	<listeners>
 		<listener
-			class-name="com.qa.opencart.listeners.AnnotationTransformer" />
+			class-name="com.autolot.qa.listeners.AnnotationTransformer" />
 	</listeners>
 
 	<test name="Autolot Search results Page Test">
