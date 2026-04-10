@@ -37,4 +37,10 @@ public class SearchResultsTest extends BaseTest{
 		boolean flag = searchResults.doValidateSearchResultHeaders("10001", "25");
 		Assert.assertTrue(flag);
 	}
+	
+	@Test(priority=6)
+	public void SearchResultsFiltersValidationTest() {
+		boolean flag = searchResults.doValidateSRPfilters("10002", "75");
+		Assert.assertTrue(flag);
+	}
 }
