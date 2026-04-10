@@ -46,6 +46,7 @@ public class SearchResultPage {
 	private By searchResultCity = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[2]");
 	private By searchResultProximity = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[3]");
 	private By searchResultZipCode = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[4]");
+	private By srpFiltersSelected = By.xpath("//div[@class='filters-inner']/span");
 	
 	public SearchResultPage(WebDriver driver) {
 		this.driver = driver;
@@ -69,7 +70,7 @@ public class SearchResultPage {
 	}
 	
 	public void doFilterByDistance(String zipCode, String proximityValue) {
-		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT);
 		eleUtil.waitForElementVisible(filtersPanel, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		eleUtil.clickAndRetry(filterByDistance, cityOrZipcode, AutolotConstants.DEFAULT_RETRY_TIME_OUT);
 		eleUtil.waitForElementClickable(filterByDistance, AutolotConstants.DEFAULT_SHORT_TIME_OUT).click();
@@ -98,6 +99,19 @@ public class SearchResultPage {
 				System.out.println(">>>>>>>>>> Encountered error while validating zipcode and proximity <<<<<<<<<<");
 				return false;
 			}
+	}
+	
+	public boolean doValidateSRPfilters(String zipCode, String proximityValue) {
+		doFilterByDistance(zipCode, proximityValue);
+		boolean flag = false;
+		List<WebElement> srpFilters = eleUtil.waitForElementsVisible(srpFiltersSelected, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+			for (WebElement e : srpFilters) {
+				String text = e.getText();
+				if(text.contains(zipCode) || text.contains(proximityValue)) {
+					flag=true;
+				}
+			}
+		return flag;
 	}
 	
 	
