@@ -15,7 +15,8 @@ public class SearchResultPage {
 	private  WebDriver driver;
 	private ElementUtils eleUtil;
 
-	private By searchResultsContainer = By.xpath("//div[@class='content']/div");
+	private By searchResultsFilterContainer = By.xpath("//div[@class='content']/div[@class='left-section']/div/div");
+	private By searchResultsVehiclesContainer = By.xpath("//div[@class='content']/div[@class='right-section']/div/div[3]/article");
 	private By filtersPanel = By.xpath("//div[@class='filters']");
 	private By searchResultFilters = By.xpath("//div[@class='filters']/div");
 	
@@ -23,23 +24,7 @@ public class SearchResultPage {
 		private By cityOrZipcode = By.xpath("//div[contains(@class,'search-input')]/input");
 		private By citySuggestion = By.xpath("//ul[@class='suggestions-list']/li[1]");
 		private By proximityFilter = By.xpath("//select[contains(@id,'srp-select-within')]");
-	private By filterByCondition = By.xpath("//div[@class='acc-item'][2]");
-	private By filterByPrice = By.xpath("//div[@class='acc-item'][3]");
-	private By filterByMake = By.xpath("//div[@class='acc-item'][4]");
-	private By filterByModel = By.xpath("//div[@class='acc-item'][5]");
-	private By filterByTrim = By.xpath("//div[@class='acc-item'][6]");
-	private By filterByYear = By.xpath("//div[@class='acc-item'][7]");
-	private By filterByMileage = By.xpath("//div[@class='acc-item'][8]");
-	private By filterByFeatures = By.xpath("//div[@class='acc-item'][9]");
-	private By filterByBodyStyles = By.xpath("//div[@class='acc-item'][10]");
-	private By filterByExteriorColor = By.xpath("//div[@class='acc-item'][11]");
-	private By filterByInteriorColor = By.xpath("//div[@class='acc-item'][12]");
-	private By filterByDriveTrain = By.xpath("//div[@class='acc-item'][13]");
-	private By filterByTransmission = By.xpath("//div[@class='acc-item'][14]");
-	private By filterByEngine = By.xpath("//div[@class='acc-item'][15]");
-	private By filterByFuelType = By.xpath("//div[@class='acc-item'][16]");
-	private By filterByFurlEconomy = By.xpath("//div[@class='acc-item'][17]");
-
+	
 	private By searchResults = By.xpath("//div[contains(@class,'g-listings')]/article");
 	private By vehicleState = By.xpath("//div[@class='footer']");	
 	private By searchResultvehicleCount = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[1]");
@@ -47,6 +32,8 @@ public class SearchResultPage {
 	private By searchResultProximity = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[3]");
 	private By searchResultZipCode = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[4]");
 	private By srpFiltersSelected = By.xpath("//div[@class='filters-inner']/span");
+	
+	private By srpVehicleImages = By.xpath("//article[1]//ul[@id='gallery-list']/li");
 	
 	public SearchResultPage(WebDriver driver) {
 		this.driver = driver;
@@ -61,8 +48,12 @@ public class SearchResultPage {
 		return eleUtil.getPageUrl();
 	}
 	
-	public  List<WebElement> getSearchPageResultContainers() {
-		return eleUtil.getElementsNamesUsingWait(searchResultsContainer, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+	public  List<WebElement> getSearchPageResultFilterContainer() {
+		return eleUtil.getElementsNamesUsingWait(searchResultsFilterContainer, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+	}
+	
+	public  List<WebElement> getSearchPageResultVehiclesContainer() {
+		return eleUtil.getElementsNamesUsingWait(searchResultsVehiclesContainer, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 	}
 	
 	public List<WebElement> getSearchResultFilters(){
