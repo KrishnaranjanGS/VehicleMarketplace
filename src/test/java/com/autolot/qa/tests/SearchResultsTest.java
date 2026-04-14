@@ -21,9 +21,15 @@ public class SearchResultsTest extends BaseTest{
 	}
 	
 	@Test(priority=3)
-	public void SearchResultsContainersTest() {
-		int containerSize = searchResults.getSearchPageResultContainers().size();
-		Assert.assertEquals(containerSize, 2);
+	public void SearchResultsFilterContainersTest() {
+		int containerSize = searchResults.getSearchPageResultFilterContainer().size();
+		Assert.assertEquals(containerSize, 18);
+	}
+	
+	@Test(priority=3)
+	public void SearchResultsVehiclesContainersTest() {
+		int containerSize = searchResults.getSearchPageResultVehiclesContainer().size();
+		Assert.assertEquals(containerSize, 9);
 	}
 	
 	@Test(priority=4)
