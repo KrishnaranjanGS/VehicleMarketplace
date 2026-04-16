@@ -5,6 +5,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
 import com.autolot.qa.constants.AutolotConstants;
@@ -129,6 +130,32 @@ public class SearchResultPage {
 				}
 			}
 		return flag;
+	}
+	
+	public boolean doSortValidation(String sortByText) throws InterruptedException {
+		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_LONG_TIME_OUT);
+		eleUtil.waitForElementVisible(srpSort, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		eleUtil.waitForElementsVisible(vehiclesPrices, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		String firstPriceBeforeSort = eleUtil.getElementsNamesUsingWait(vehiclesPrices, AutolotConstants.DEFAULT_SHORT_TIME_OUT).get(0).getText();
+		eleUtil.doSelectDropdownByText(srpSort, sortByText);
+		eleUtil.waitInit(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT).until(ExpectedConditions.stalenessOf(driver.findElement(vehiclesPrices)));
+		List<WebElement> prices = eleUtil.waitForElementsVisible(vehiclesPrices, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+			int prevPrice = 0;
+			for(WebElement e: prices) {
+				String text = e.getText().trim().replaceAll("[^0-9]", "");
+				if(text.isEmpty()) continue;
+				int currPrice = Integer.parseInt(text);
+					if(prevPrice<=currPrice) {
+						System.out.println(prevPrice+"<="+currPrice);
+						prevPrice=currPrice;
+					}
+					else {
+						System.out.println(prevPrice+">"+currPrice);
+						return false;
+					}
+			}
+			System.out.println("Sort by price: low to high is PASSED!");
+			return true;
 	}
 	
 }

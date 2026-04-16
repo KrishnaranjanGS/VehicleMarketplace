@@ -28,6 +28,11 @@ public class ElementUtils {
 		this.js = (JavascriptExecutor)driver;
 	}
 	
+	public WebDriverWait waitInit(int timeOut) {
+		wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		return wait;
+	}
+	
 	public String getPageTitle() {
 	String title = driver.getTitle();
 	return title;
@@ -40,11 +45,6 @@ public class ElementUtils {
 	
 	public WebElement getWebElement(By locator) {
 		return driver.findElement(locator);
-	}
-	
-	public WebDriverWait waitInit(int timeOut) {
-		wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
-		return wait;
 	}
 	
 	public WebElement waitAndGetWebElement(By locator, int timeOut) {
@@ -92,9 +92,27 @@ public class ElementUtils {
 		act.moveToElement(element).click().build().perform();
 	}
 	
+	public void scrollToElementUsingActions(WebElement element) {
+		act.moveToElement(element).build().perform();
+		
+	}
+	
+	 public void clickUsingJS(WebElement element) { 
+	 js.executeScript("arguments[0].click();", element); 
+	 }
+	 
+	 public void clickUsingJS(By locator) { 
+	 js.executeScript("arguments[0].click();", getWebElement(locator)); 
+	 }
+	 
+	 public void doSelectDropdownByText(By locator, String sortText) {
+		 Select select = new Select(getWebElement(locator));
+		 select.selectByVisibleText(sortText);
+	 }
+	 
 	public void waitForPageLoad(int timeOut) {
 		waitInit(timeOut);
-		wait.until(d -> ((JavascriptExecutor) d).executeScript("return document.readyState").equals("complete"));
+		wait.until(driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
 	}	
 	
 	public void clickAndRetry(By parentLocator, By childLocator, int timeout) {
@@ -131,20 +149,6 @@ public class ElementUtils {
 
 	}
 	
-	public void scrollToElementUsingActions(WebElement element) {
-		act.moveToElement(element).build().perform();
-		
-	}
-	
-	 public void clickUsingJS(WebElement element) { 
-	 js.executeScript("arguments[0].click();", element); 
-	 }
-	 
-	 public void clickUsingJS(By locator) { 
-	 js.executeScript("arguments[0].click();", getWebElement(locator)); 
-	 }
-	 
-
 
 	
 }
