@@ -50,5 +50,9 @@ public class SearchResultsTest extends BaseTest{
 		Assert.assertTrue(flag);
 	}
 	
-
+	@Test(priority=7)
+	public void SortTest() throws InterruptedException {
+		boolean flag = searchResults.doSortValidation("Price: low to high");
+		Assert.assertTrue(flag);
+	}
 }
