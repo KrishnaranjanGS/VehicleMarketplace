@@ -14,6 +14,7 @@ public class SearchResultPage {
 	
 	private  WebDriver driver;
 	private ElementUtils eleUtil;
+	private Select select;
 
 	private By searchResultsFilterContainer = By.xpath("//div[@class='content']/div[@class='left-section']/div/div");
 	private By searchResultsVehiclesContainer = By.xpath("//div[@class='content']/div[@class='right-section']/div/div[3]/article");
@@ -21,9 +22,13 @@ public class SearchResultPage {
 	private By searchResultFilters = By.xpath("//div[@class='filters']/div");
 	
 	private By filterByDistance = By.xpath("//div[@class='acc-item'][1]");
-		private By cityOrZipcode = By.xpath("//div[contains(@class,'search-input')]/input");
+		private By cityOrZipcode = By.xpath("//div[@class='search-input']/input");
 		private By citySuggestion = By.xpath("//ul[@class='suggestions-list']/li[1]");
 		private By proximityFilter = By.xpath("//select[contains(@id,'srp-select-within')]");
+	
+	private By filterByMake = By.xpath("//div[@class='acc-item'][4]");
+		private By makesContainer = By.xpath("//div[@id='acc-content-accordion_make']");
+		private By makes = By.xpath("//input[@name='make']");
 	
 	private By searchResults = By.xpath("//div[contains(@class,'g-listings')]/article");
 	private By vehicleState = By.xpath("//div[@class='footer']");	
@@ -33,7 +38,10 @@ public class SearchResultPage {
 	private By searchResultZipCode = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[4]");
 	private By srpFiltersSelected = By.xpath("//div[@class='filters-inner']/span");
 	
+	private By srpSort = By.xpath("//div[@class='right-top']//label[contains(text(),'Sort by')]/following-sibling::select");
 	private By srpVehicleImages = By.xpath("//article[1]//ul[@id='gallery-list']/li");
+	private By vehiclesPrices = By.xpath("//div[@class='price']");
+	private By vehicleMiles = By.xpath("//div[@class='mileage']");
 	
 	public SearchResultPage(WebDriver driver) {
 		this.driver = driver;
@@ -64,17 +72,35 @@ public class SearchResultPage {
 		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT);
 		eleUtil.waitForElementVisible(filtersPanel, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		eleUtil.clickAndRetry(filterByDistance, cityOrZipcode, AutolotConstants.DEFAULT_RETRY_TIME_OUT);
-		eleUtil.waitForElementClickable(filterByDistance, AutolotConstants.DEFAULT_SHORT_TIME_OUT).click();
 		WebElement cityZipcode =eleUtil.waitForElementVisible(cityOrZipcode, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		cityZipcode.sendKeys(zipCode);
 		WebElement citySuggest = eleUtil.waitForElementVisible(citySuggestion, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		citySuggest.click();
 		eleUtil.waitForElementClickable(proximityFilter, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
-		Select select = new Select(eleUtil.getWebElement(proximityFilter));
+		select = new Select(eleUtil.getWebElement(proximityFilter));
 		select.selectByValue(proximityValue);
 	}
 	
-	public boolean doValidateSearchResultHeaders(String zipCode, String proximityValue) throws InterruptedException {
+	public void doFilterByMake(String makeName) {
+		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT);
+		eleUtil.waitForElementVisible(filtersPanel, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		eleUtil.clickAndRetry(filterByMake, makesContainer , AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		List<WebElement> makesList = eleUtil.waitForElementsVisible(makes, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+			for(WebElement e: makesList) {
+				eleUtil.scrollToElementUsingActions(e);
+				String text = e.getText().trim();
+				System.out.println(text);
+					if(text.contains(makeName)) {
+						eleUtil.clickUsingActionsClass(e);
+						break;
+					}
+					else {
+						System.out.println("Invalid make");
+					}
+			}
+	}
+	
+	public boolean doValidateSearchResultHeaders(String zipCode, String proximityValue) {
 		doFilterByDistance(zipCode, proximityValue);
 		eleUtil.waitForElementsVisible(searchResultZipCode, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
 		String srpZipCode = eleUtil.getElementTextUsingWait(searchResultZipCode, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
@@ -104,6 +130,5 @@ public class SearchResultPage {
 			}
 		return flag;
 	}
-	
 	
 }

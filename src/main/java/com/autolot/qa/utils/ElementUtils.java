@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.autolot.qa.constants.AutolotConstants;
@@ -23,15 +24,9 @@ public class ElementUtils {
 	
 	public ElementUtils(WebDriver driver) {
 		this.driver = driver;
-		this.wait = new WebDriverWait(driver, Duration.ofSeconds(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT));
 		this.act = new Actions(driver);
 		this.js = (JavascriptExecutor)driver;
 	}
-	
-	// A helper to get a wait object only when a custom timeout is needed
-	private WebDriverWait getWait(int timeout) {
-        return new WebDriverWait(driver, Duration.ofSeconds(timeout));
-    }
 	
 	public String getPageTitle() {
 	String title = driver.getTitle();
@@ -45,6 +40,16 @@ public class ElementUtils {
 	
 	public WebElement getWebElement(By locator) {
 		return driver.findElement(locator);
+	}
+	
+	public WebDriverWait waitInit(int timeOut) {
+		wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		return wait;
+	}
+	
+	public WebElement waitAndGetWebElement(By locator, int timeOut) {
+		waitInit(timeOut);
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
 	
 	public String getElementTextUsingWait(By locator, int timeout) {
@@ -61,18 +66,21 @@ public class ElementUtils {
 		return elements;
 	}
 	
-	public WebElement waitForElementVisible(By locator, int timeout) {
-		WebElement element = getWait(timeout).until(ExpectedConditions.visibilityOfElementLocated(locator));
+	public WebElement waitForElementVisible(By locator, int timeOut) {
+		waitInit(timeOut);
+		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		return element;
 	}
 	
-	public List<WebElement> waitForElementsVisible(By locator, int timeout) {
-		List<WebElement> elements = getWait(timeout).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
+	public List<WebElement> waitForElementsVisible(By locator, int timeOut) {
+		waitInit(timeOut);
+		List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
 		return elements;
 	}
 	
-	public WebElement waitForElementClickable(By locator, int timeout) {
-		WebElement element = getWait(timeout).until(ExpectedConditions.elementToBeClickable(locator));
+	public WebElement waitForElementClickable(By locator, int timeOut) {
+		waitInit(timeOut);
+		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 		return element;
 	}
 	
@@ -80,8 +88,13 @@ public class ElementUtils {
 		act.moveToElement(getWebElement(locator)).click().build().perform();
 	}
 	
-	public void waitForPageLoad(int timeout) {
-		getWait(timeout).until(d -> ((JavascriptExecutor) d).executeScript("return document.readyState").equals("complete"));
+	public void clickUsingActionsClass(WebElement element) {
+		act.moveToElement(element).click().build().perform();
+	}
+	
+	public void waitForPageLoad(int timeOut) {
+		waitInit(timeOut);
+		wait.until(d -> ((JavascriptExecutor) d).executeScript("return document.readyState").equals("complete"));
 	}	
 	
 	public void clickAndRetry(By parentLocator, By childLocator, int timeout) {
@@ -91,13 +104,15 @@ public class ElementUtils {
 	        try {
 	            // Wait for element and click 
 	        	WebElement ele = waitForElementClickable(parentLocator, timeout);
+	        	scrollToElementUsingActions(ele);
 	            ele.click(); 
 	            // Check if the child element is now visible
 	            waitForElementsVisible(childLocator, timeout);
+	            scrollToElementUsingActions(getWebElement(childLocator));
 	            isOpen = true;
 	        } catch (Exception e) {
 	            counter++;
-	            System.out.println("Element click didn't work, retrying... attempt " + counter);
+	            System.out.println("Element click didn't work for " + e + ", retrying... attempt " + counter);
 	        }
 	    }
 	}
@@ -109,11 +124,16 @@ public class ElementUtils {
 			String eleValue = driver.findElement(locator).getText().trim().split(" ")[1];
 			System.out.println("proximity value in SRP is: " + eleValue);
 			if (eleValue.equals(value)){
-				counter=0;
+				break;
 			}
 			counter--;
 		} while (counter>0);
 
+	}
+	
+	public void scrollToElementUsingActions(WebElement element) {
+		act.moveToElement(element).build().perform();
+		
 	}
 	
 	 public void clickUsingJS(WebElement element) { 
@@ -123,5 +143,8 @@ public class ElementUtils {
 	 public void clickUsingJS(By locator) { 
 	 js.executeScript("arguments[0].click();", getWebElement(locator)); 
 	 }
+	 
+
+
 	
 }
