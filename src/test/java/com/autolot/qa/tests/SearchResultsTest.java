@@ -39,7 +39,7 @@ public class SearchResultsTest extends BaseTest{
 	}
 	
 	@Test(priority=5)
-	public void FilterByDistsanceTest() throws InterruptedException {
+	public void FilterByDistsanceTest() {
 		boolean flag = searchResults.doValidateSearchResultHeaders("10001", "25");
 		Assert.assertTrue(flag);
 	}
@@ -49,4 +49,6 @@ public class SearchResultsTest extends BaseTest{
 		boolean flag = searchResults.doValidateSRPfilters("10002", "75");
 		Assert.assertTrue(flag);
 	}
+	
+
 }
