@@ -2,8 +2,10 @@ package com.autolot.qa.tests;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import com.autolot.qa.base.BaseTest;
+import com.autolot.qa.constants.AutolotConstants;
 
 public class SearchResultsTest extends BaseTest{
 
@@ -11,13 +13,13 @@ public class SearchResultsTest extends BaseTest{
 	@Test(priority=1)
 	public void SearchResultsTitleTest() {
 		String pageTitle = searchResults.getSearchPageResultTitle();
-		Assert.assertEquals(pageTitle, "New and Used Cars for Sale in all locations - U.S. Bank Auto Sales");
+		Assert.assertEquals(pageTitle, AutolotConstants.PAGE_TITLE);
 	}
 	
 	@Test(priority=2)
 	public void SearchResultsUrlTest() {
 		String pageUrl = searchResults.getSearchPageResultUrl();
-		Assert.assertEquals(pageUrl, "https://auto-sales.usbank.com/vehicles-for-sale");
+		Assert.assertEquals(pageUrl, AutolotConstants.PAGE_URL);
 	}
 	
 	@Test(priority=3)
@@ -52,7 +54,23 @@ public class SearchResultsTest extends BaseTest{
 	
 	@Test(priority=7)
 	public void SortTest() throws InterruptedException {
-		boolean flag = searchResults.doSortValidation("Price: low to high");
+		boolean flag = searchResults.doSortValidation(AutolotConstants.SORT_OPTION);
 		Assert.assertTrue(flag);
 	}
+	
+	@Test(priority=8)
+	public void paginationTextValidationTest() {
+		String[] paginationText = searchResults.doValidatePaginationText();
+		softAssert.assertTrue(paginationText[0].startsWith(AutolotConstants.PAGINATION_TEXT));
+		softAssert.assertTrue(paginationText[1].contains(AutolotConstants.PAGINATION_PREV_DISABLED));
+		softAssert.assertTrue(paginationText[2].contains(AutolotConstants.PAGINATION_NEXT));
+		softAssert.assertAll();
+	}
+	
+	@Test(priority=9)
+	public void paginationFunctionValidationTest() {
+		boolean flag = searchResults.doValidatePaginationFunction();
+		Assert.assertTrue(flag);
+	}
+	
 }
