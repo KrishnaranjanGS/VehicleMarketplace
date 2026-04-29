@@ -21,28 +21,24 @@ public class SearchResultPage {
 	private By searchResultsVehiclesContainer = By.xpath("//div[@class='content']/div[@class='right-section']/div/div[3]/article");
 	private By filtersPanel = By.xpath("//div[@class='filters']");
 	private By searchResultFilters = By.xpath("//div[@class='filters']/div");
-	
-	private By filterByDistance = By.xpath("//div[@class='acc-item'][1]");
+		private By filterByDistance = By.xpath("//div[@class='acc-item'][1]");
 		private By cityOrZipcode = By.xpath("//div[@class='search-input']/input");
 		private By citySuggestion = By.xpath("//ul[@class='suggestions-list']/li[1]");
 		private By proximityFilter = By.xpath("//select[contains(@id,'srp-select-within')]");
-	
 	private By filterByMake = By.xpath("//div[@class='acc-item'][4]");
 		private By makesContainer = By.xpath("//div[@id='acc-content-accordion_make']");
 		private By makes = By.xpath("//input[@name='make']");
-	
-	private By searchResults = By.xpath("//div[contains(@class,'g-listings')]/article");
-	private By vehicleState = By.xpath("//div[@class='footer']");	
-	private By searchResultvehicleCount = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[1]");
-	private By searchResultCity = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[2]");
 	private By searchResultProximity = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[3]");
 	private By searchResultZipCode = By.xpath("//div//h1[contains(@class,'page-heading')]/following-sibling::div/p/span[4]");
 	private By srpFiltersSelected = By.xpath("//div[@class='filters-inner']/span");
-	
 	private By srpSort = By.xpath("//div[@class='right-top']//label[contains(text(),'Sort by')]/following-sibling::select");
-	private By srpVehicleImages = By.xpath("//article[1]//ul[@id='gallery-list']/li");
+	private By srpFirstVehicleLink = By.xpath("//a[@class='article-link'][1]");
+	private By srpFirstVehicleInfo = By.xpath("//article[@class='listing']/div[@class='main-info'][1]");
+	private By srpFirstVehicleFooter = By.xpath("//article[@class='listing']/div[@class='footer'][1]");
 	private By vehiclesPrices = By.xpath("//div[@class='price']");
-	private By vehicleMiles = By.xpath("//div[@class='mileage']");
+	private By paginationContainer = By.xpath("//section[@aria-label='Pagination']");
+	private By paginationBtn = By.xpath("//ul[@class='pagination-list']/li");
+	
 	
 	public SearchResultPage(WebDriver driver) {
 		this.driver = driver;
@@ -156,6 +152,62 @@ public class SearchResultPage {
 			}
 			System.out.println("Sort by price: low to high is PASSED!");
 			return true;
+	}
+	
+	public String doGetVehicleDetailsFromSrp() {
+		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_LONG_TIME_OUT);
+		String text;
+		text = eleUtil.getElementTextUsingWait(srpFirstVehicleInfo, AutolotConstants.DEFAULT_LONG_TIME_OUT);
+		text = text + eleUtil.getElementTextUsingWait(srpFirstVehicleFooter, AutolotConstants.DEFAULT_SHORT_TIME_OUT);
+		System.out.println(text);
+		return text;
+	}
+	
+	public VehicleDetailPage goToVehicleDetailPage() {
+		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_LONG_TIME_OUT);
+		eleUtil.waitForElementClickable(srpFirstVehicleLink, AutolotConstants.DEFAULT_SHORT_TIME_OUT).click();
+		return new VehicleDetailPage(driver);
+	}
+	
+	public String[] doValidatePaginationText() {
+		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT);
+		String[] paginationText = eleUtil.getElementTextUsingWait(paginationContainer, AutolotConstants.DEFAULT_SHORT_TIME_OUT)
+				.split("\n");
+			for(String s: paginationText) {
+				System.out.println(s);
+			}
+		return paginationText;
+	}
+	
+	public boolean doClickPaginationButton(String xPath, String option) {
+		By locator = By.xpath(xPath+option+"/a");
+		try {
+			System.out.println("Checking '" + eleUtil.getWebElement(locator).getText() + "' button");
+			eleUtil.scrollToElementUsingActions(eleUtil.waitForElementClickable(locator, AutolotConstants.DEFAULT_SHORT_TIME_OUT));
+			eleUtil.waitForElementClickable(locator, AutolotConstants.DEFAULT_SHORT_TIME_OUT).click();
+			System.out.println("Clicked on " + eleUtil.getWebElement(locator).getText());
+		} catch (Exception e) {
+		    System.out.println("FAILED to click: " + option);
+		    e.printStackTrace();
+		    return false;
+		}
+		return true;
+	}
+
+	public boolean doValidatePaginationFunction() {
+		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT);
+		String xPath = "//ul[@class='pagination-list']/li";
+		boolean flag1 = doClickPaginationButton(xPath, "[1]");
+		boolean flag2 = doClickPaginationButton(xPath, "[2]");
+		String[] text = doValidatePaginationText();
+		boolean flag3 = false;
+		System.out.println("text[1] = " + text[1]);
+		System.out.println("text[2] = " + text[2]);
+			if (text[1].contains(AutolotConstants.PAGINATION_PREV) && text[2].contains(AutolotConstants.PAGINATION_NEXT)) {
+				flag3 = true;
+			}
+
+		return !flag1 && flag2 && flag3;
 	}
 	
 }
