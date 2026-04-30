@@ -60,8 +60,8 @@ public class SearchResultsTest extends BaseTest{
 	
 	@Test(priority=8)
 	public void paginationTextValidationTest() {
-		String[] paginationText = searchResults.doValidatePaginationText();
-		softAssert.assertTrue(paginationText[0].startsWith(AutolotConstants.PAGINATION_TEXT));
+		String[] paginationText = searchResults.doGetPaginationText();
+		softAssert.assertTrue(paginationText[0].startsWith(AutolotConstants.PAGINATION_1_TEXT));
 		softAssert.assertTrue(paginationText[1].contains(AutolotConstants.PAGINATION_PREV_DISABLED));
 		softAssert.assertTrue(paginationText[2].contains(AutolotConstants.PAGINATION_NEXT));
 		softAssert.assertAll();
@@ -69,7 +69,8 @@ public class SearchResultsTest extends BaseTest{
 	
 	@Test(priority=9)
 	public void paginationFunctionValidationTest() {
-		boolean flag = searchResults.doValidatePaginationFunction();
+		int paginationCount = 3;
+		boolean flag = searchResults.doValidatePaginationFunction(paginationCount);
 		Assert.assertTrue(flag);
 	}
 	

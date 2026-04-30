@@ -12,7 +12,7 @@ public class AutolotConstants {
 	
 	public static final String SORT_OPTION = "Price: low to high";
 	
-	public static final String PAGINATION_TEXT = "Page 1 of";
+	public static final String PAGINATION_1_TEXT = "Page 1 of";
 	public static final String PAGINATION_NEXT = "Next page";
 	public static final String PAGINATION_PREV = "Previous page";
 	public static final String PAGINATION_PREV_DISABLED = "Previous page - disabled";

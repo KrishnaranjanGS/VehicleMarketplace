@@ -169,7 +169,7 @@ public class SearchResultPage {
 		return new VehicleDetailPage(driver);
 	}
 	
-	public String[] doValidatePaginationText() {
+	public String[] doGetPaginationText() {
 		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT);
 		String[] paginationText = eleUtil.getElementTextUsingWait(paginationContainer, AutolotConstants.DEFAULT_SHORT_TIME_OUT)
 				.split("\n");
@@ -194,15 +194,19 @@ public class SearchResultPage {
 		return true;
 	}
 
-	public boolean doValidatePaginationFunction() {
+	public boolean doValidatePaginationFunction(int count) {
 		eleUtil.waitForPageLoad(AutolotConstants.DEFAULT_MEDIUM_TIME_OUT);
 		String xPath = "//ul[@class='pagination-list']/li";
 		boolean flag1 = doClickPaginationButton(xPath, "[1]");
-		boolean flag2 = doClickPaginationButton(xPath, "[2]");
-		String[] text = doValidatePaginationText();
+		String[] text=null;
+		boolean flag2=false;
+		for(int i=1; i<=count; i++) {
+			flag2 = doClickPaginationButton(xPath, "[2]");
+			text = doGetPaginationText();
+			System.out.println("text[1] = " + text[1]);
+			System.out.println("text[2] = " + text[2]);
+		}
 		boolean flag3 = false;
-		System.out.println("text[1] = " + text[1]);
-		System.out.println("text[2] = " + text[2]);
 			if (text[1].contains(AutolotConstants.PAGINATION_PREV) && text[2].contains(AutolotConstants.PAGINATION_NEXT)) {
 				flag3 = true;
 			}
